@@ -1,3 +1,5 @@
+#ifndef DEQUEUE_HPP
+#define DEQUEUE_HPP
 #include "./runnableTask.hpp"
 
 class Dequeue {
@@ -8,3 +10,5 @@ class Dequeue {
         virtual RunnableTask* popTop() = 0;
         
 };
+
+#endif

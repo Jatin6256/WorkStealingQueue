@@ -1,3 +1,5 @@
+#ifndef CIRCULARARRAY_HPP
+#define CIRCULARARRAY_HPP
 #include "./runnableTask.hpp"
 
 class CircularArray {
@@ -13,3 +15,5 @@ class CircularArray {
         void put(RunnableTask* task, int index);
         CircularArray* resize(int bottom,int top);
 };
+
+#endif

@@ -1,10 +1,15 @@
+#ifndef UNBOUNDEDEQUEUE_HPP
+#define UNBOUNDEDDEQUEUE_HPP
 #include<atomic>
 #include "./dequeue.hpp"
+#include "./circularArray.hpp"
 
 class UnboundedDequeue: public Dequeue {
-    static int LOG_CAPACITY;
+    int LOG_CAPACITY;
     volatile int bottom;
-    std::atomic<int> top;
+    std::atomic<int>* top;
+    // TODO make it volatile
+    CircularArray* tasks;
     public:
         UnboundedDequeue();
         UnboundedDequeue(int capacity);
@@ -14,3 +19,4 @@ class UnboundedDequeue: public Dequeue {
         RunnableTask* popTop();
 
 };
+#endif

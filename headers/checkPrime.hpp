@@ -1,4 +1,5 @@
-
+#ifndef CHECKPRIME_HPP
+#define CHECKPRIME_HPP
 #include "./runnableTask.hpp"
 
 class CheckPrime: public RunnableTask{
@@ -9,3 +10,5 @@ class CheckPrime: public RunnableTask{
         CheckPrime(int n);
         void run();
 };
+
+#endif

@@ -14,6 +14,7 @@ CheckPrime::CheckPrime(int n){
 }
 
 void CheckPrime::run() {
-    std::cout << "Check Prime Run" << std::endl;
+
+    std::cout << "Check Prime Run: " << number <<  std::endl;
 }
 

@@ -1,3 +1,5 @@
+#ifndef WORKSTEALINGDEQUEUE_HPP
+#define WORKSTEALINGDEQUEUE_HPP
 #include<iostream>
 #include <stdlib.h>
 #include<time.h>
@@ -12,3 +14,5 @@ public:
     WorkStealingDequeues(Dequeue** myQueue, int l);
     void run(int id);
 };
+
+#endif  
