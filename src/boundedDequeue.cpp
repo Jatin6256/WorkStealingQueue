@@ -10,6 +10,7 @@ BoundedDequeue::BoundedDequeue(int capacity)
     tasks = new RunnableTask[capacity];
     StampedReference<int> topInput;
     top = new std::atomic<StampedReference<int>>(topInput);
+    bottom = 0;
 }
 
 bool BoundedDequeue::isEmpty()

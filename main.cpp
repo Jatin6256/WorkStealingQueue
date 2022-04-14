@@ -5,7 +5,7 @@
 #include "./headers/boundedDequeue.hpp"
 
 void *testWorkStealing(void *sharedBlock);
-int numOfThreads = 4;
+int numOfThreads = 4, numOfTasks=4;
 
 struct SharedValue
 {
@@ -39,9 +39,12 @@ int main()
     Dequeue** boundedDequeue = new Dequeue*[numOfThreads];
     for (int i = 0; i < numOfThreads; i++)
     {
-        boundedDequeue[i] = new BoundedDequeue(); 
-        CheckPrime checkPrime(rand() % 100);
-        boundedDequeue[i] -> pushBottom(&checkPrime);  
+        for (int j = 0; j < numOfTasks; j++)
+        {
+            boundedDequeue[i] = new BoundedDequeue(numOfTasks); 
+            CheckPrime checkPrime(rand() % 100);
+            boundedDequeue[i]->pushBottom(&checkPrime);  
+        } 
     }
 
     for (int i = 0; i < numOfThreads; i++){
@@ -64,8 +67,6 @@ int main()
         pthread_join(threads[i], NULL);
     }
     
-    
-    std::cout << "Hello World!" << std::endl;
     return 0;
 }
 
@@ -76,7 +77,7 @@ void *testWorkStealing(void* sharedBlock){
     int id = (*sharedContent).threadNumber;
     Dequeue** boundedDequeue = (*sharedContent).boundedDequeue;
 
-    WorkStealingDequeues workStealingDequeues(boundedDequeue, 5);
+    WorkStealingDequeues workStealingDequeues(boundedDequeue, numOfTasks*numOfThreads);
 
     workStealingDequeues.run(id);
 
