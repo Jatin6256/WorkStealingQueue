@@ -10,9 +10,9 @@ class WorkStealingDequeues
 {
     Dequeue** queue;
     int length;
-public:
-    WorkStealingDequeues(Dequeue** myQueue, int l);
-    void run(int id);
+    public:
+        WorkStealingDequeues(Dequeue** myQueue, int l);
+        void run(int id);
 };
 
 #endif  

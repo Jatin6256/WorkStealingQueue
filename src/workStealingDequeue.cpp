@@ -25,8 +25,6 @@ void WorkStealingDequeues::run(int id)
         int count = length;
         while (task == nullptr && count > 0)
         {
-            // TODO
-            // Thread.yield();
             std::this_thread::yield();
             int victim = rand() % length;
             while (victim == me)
