@@ -13,7 +13,7 @@ UnboundedDequeue::UnboundedDequeue()
 
 bool UnboundedDequeue::isEmpty()
 {
-    std::cout << "UnboundedDequeue isEmpty line 16 UnboundedDequeue.cpp" << "\n";
+    // std::cout << "UnboundedDequeue isEmpty line 16 UnboundedDequeue.cpp" << "\n";
     int localTop = top->load();
     int localBottom = bottom;
     return (localBottom <= localTop);
