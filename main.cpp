@@ -12,16 +12,19 @@ struct SharedValue
     int threadNumber; // to track thread number
     // Dequeue **boundedDequeue;
     WorkStealingDequeues *workStealingDequeues;
+    int start,end;
 
     SharedValue()
     {
         workStealingDequeues = nullptr;
     }
 
-    SharedValue(int threadNumber, WorkStealingDequeues *workStealingDequeues)
+    SharedValue(int threadNumber, WorkStealingDequeues *workStealingDequeues, int start, int end)
     {
         this->threadNumber = threadNumber;
         this->workStealingDequeues = workStealingDequeues;
+        this->start = start;
+        this->end = end;
     }
 };
 
@@ -61,21 +64,29 @@ int main()
     {
         unboundedDequeue[i] = new UnboundedDequeue();
 
-        for (int j = 0; j < numOfTasks; j++)
-        {
-            int random = rand() % 100;
-            std::cout << "random: " << random << "\n";
-            CheckPrime* checkPrime = new CheckPrime(random);
-            unboundedDequeue[i]->pushBottom(checkPrime);
-        }
+        // for (int j = 0; j < numOfTasks; j++)
+        // {
+        //     int random = rand() % 100;
+        //     std::cout << "random: " << random << "\n";
+        //     CheckPrime* checkPrime = new CheckPrime(random);
+        //     unboundedDequeue[i]->pushBottom(checkPrime);
+        // }
     }
 
     WorkStealingDequeues *workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads);
-
+    int checkPrimeUpto = 11;
+    int taskSize = checkPrimeUpto / numOfThreads;
+    int start = 0;
     for (int i = 0; i < numOfThreads; i++)
     {
-        sharedContent[i] = new SharedValue(i, workStealingDequeues);
+        if(i == numOfThreads - 1){
+            sharedContent[i] = new SharedValue(i, workStealingDequeues, start, checkPrimeUpto);
+            break;
+        }
+        sharedContent[i] = new SharedValue(i, workStealingDequeues, start, start + taskSize);
+        start += taskSize;
     }
+
 
     // create threads
     for (int i = 0; i < numOfThreads; i++)
@@ -103,9 +114,12 @@ void *testWorkStealing(void *sharedBlock)
     SharedValue *sharedContent = (SharedValue *)sharedBlock;
     int lVar;
     int id = sharedContent->threadNumber;
+    int start = sharedContent->start;
+    int end = sharedContent->end;
+    std::cout << id << " " <<   start << " " << end << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
 
-    workStealingDequeues->run(id);
+    workStealingDequeues->run(id, start, end);
 
     return NULL;
 }

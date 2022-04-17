@@ -12,7 +12,7 @@ class WorkStealingDequeues
     int length;
     public:
         WorkStealingDequeues(Dequeue** myQueue, int l);
-        void run(int id);
+        void run(int id,int start,int end);
 };
 
 #endif  

@@ -1,4 +1,5 @@
 #include "../headers/workStealingDequeue.hpp"
+#include "../headers/checkPrime.hpp"
 #include "thread"
 
 WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l)
@@ -10,12 +11,15 @@ WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l)
     srand(time(0));
 }
 
-void WorkStealingDequeues::run(int id)
+void WorkStealingDequeues::run(int id,int start, int end)
 {
     std::cout << "WorkStealingDequeues run line 14 WorkStealingDequeues.cpp"
               << "\n";
     // std::cout << (std::this_thread::get_id()) << "\n";
     int me = id;
+    int numberOfTaskToPush = 1;
+    int totalTask = end - start;
+    int taskPushed = 0;
     std::cout << "me: " << me << "\n";
 
     RunnableTask *task = queue[me]->popBottom();
@@ -25,6 +29,7 @@ void WorkStealingDequeues::run(int id)
         // std::cout << "hello1"
         //           << "\n";
         std::cout << "me: " << me << "\n";
+
 
         while (task != nullptr)
         {
@@ -36,11 +41,30 @@ void WorkStealingDequeues::run(int id)
             task->run();
             task = queue[me]->popBottom();
         }
+
+        bool hasPushedTask = false;
+        int currentTaskPushed = 0;
+        while(currentTaskPushed < numberOfTaskToPush && taskPushed < totalTask){
+            CheckPrime* checkPrime = new CheckPrime(start + taskPushed + 1);
+            queue[me]->pushBottom(checkPrime);
+            taskPushed++;
+            currentTaskPushed++;
+            hasPushedTask = true;
+        }
+        if(hasPushedTask){
+            numberOfTaskToPush *= 2;
+            if(numberOfTaskToPush > totalTask){
+                numberOfTaskToPush = totalTask - taskPushed;
+            }
+
+            task = queue[me]->popBottom();
+        }
         int count = length;
         // std::cout << "hello3"
         //           << "\n";
-        while (task == nullptr && count > 0)
+        while (task == nullptr && !hasPushedTask && count > 0 )
         {
+            std::cout << "entered while loop" << "\n";
             // std::cout << "hello4"
             //           << "\n";
 
