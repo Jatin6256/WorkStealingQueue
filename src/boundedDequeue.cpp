@@ -7,7 +7,7 @@ BoundedDequeue::BoundedDequeue() {}
 BoundedDequeue::BoundedDequeue(int capacity)
 {
     std::cout << "BoundedDequeue constructor line 7 boundedDequeue.cpp" << "\n";
-    tasks = new RunnableTask[capacity];
+    tasks = new RunnableTask*[capacity];
     StampedReference<int> topInput;
     top = new std::atomic<StampedReference<int>>(topInput);
     bottom = 0;
@@ -24,7 +24,7 @@ bool BoundedDequeue::isEmpty()
 void BoundedDequeue::pushBottom(RunnableTask *task)
 {
     std::cout << "BoundedDequeue pushBottom() line 23 boundedDequeue.cpp" << "\n";
-    tasks[bottom] = *task;
+    tasks[bottom] = task;
     bottom++;
 }
 
@@ -37,7 +37,7 @@ RunnableTask *BoundedDequeue::popTop()
     if(bottom <= oldTop.value)
         return nullptr;
 
-    RunnableTask *r = &tasks[oldTop.value];
+    RunnableTask *r = tasks[oldTop.value];
 
     if (top->compare_exchange_strong(oldTop, newTop))
         return r;
@@ -51,7 +51,7 @@ RunnableTask *BoundedDequeue::popBottom()
         return nullptr;
     bottom--;
 
-    RunnableTask *r = &tasks[bottom];
+    RunnableTask *r = tasks[bottom];
     
     StampedReference<int> oldTop = top->load();
     StampedReference<int>  newTop(0, oldTop.stamp+1);

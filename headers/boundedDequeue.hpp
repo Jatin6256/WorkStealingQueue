@@ -13,7 +13,7 @@ struct StampedReference{
 };
 
 class BoundedDequeue: public Dequeue {
-    RunnableTask* tasks;
+    RunnableTask** tasks;
     volatile int bottom;
     std::atomic<StampedReference<int>>* top;
     public:

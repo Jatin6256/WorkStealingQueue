@@ -1,6 +1,7 @@
 #include "../headers/workStealingDequeue.hpp"
 #include "../headers/checkPrime.hpp"
 #include "thread"
+#include<iostream>
 
 WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l)
 {
