@@ -4,6 +4,7 @@
 
 class CheckPrime: public RunnableTask{
     int number;
+    static const bool debugMode = false;
 
     public:
         CheckPrime();

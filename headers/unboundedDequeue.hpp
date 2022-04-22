@@ -10,6 +10,8 @@ class UnboundedDequeue: public Dequeue {
     std::atomic<int>* top;
     // TODO make it volatile
     CircularArray* tasks;
+    static const bool debugMode = false; 
+
     public:
         UnboundedDequeue();
         UnboundedDequeue(int capacity);

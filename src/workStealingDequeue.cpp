@@ -1,74 +1,79 @@
 #include "../headers/workStealingDequeue.hpp"
 #include "../headers/checkPrime.hpp"
 #include "thread"
-#include<iostream>
+#include <iostream>
 
-WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l)
+WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l, bool hasConcurrentPushTopMethod)
 {
-    std::cout << "WorkStealingDequeues constructor line 6 WorkStealingDequeues.cpp"
-              << "\n";
+    if (debugMode)
+        std::cout << "WorkStealingDequeues constructor line 6 WorkStealingDequeues.cpp"
+                  << "\n";
     queue = myQueue;
     length = l;
+    this->hasConcurrentPushTopMethod = hasConcurrentPushTopMethod;
     srand(time(0));
 }
 
-void WorkStealingDequeues::run(int id,int start, int end)
+void WorkStealingDequeues::run(int id, int start, int end)
 {
-    std::cout << "WorkStealingDequeues run line 14 WorkStealingDequeues.cpp"
-              << "\n";
-    // std::cout << (std::this_thread::get_id()) << "\n";
+    if (debugMode)
+        std::cout << "WorkStealingDequeues run line 14 WorkStealingDequeues.cpp"
+                  << "\n";
     int me = id;
     int numberOfTaskToPush = 1;
     int totalTask = end - start;
     int taskPushed = 0;
-    std::cout << "me: " << me << "\n";
+    if (debugMode)
+        std::cout << "me: " << me << "\n";
 
     RunnableTask *task = queue[me]->popBottom();
     while (true)
     {
 
-        // std::cout << "hello1"
-        //           << "\n";
-        std::cout << "me: " << me << "\n";
-
 
         while (task != nullptr)
         {
-            std::cout << "me: " << me << "\n";
+            if (debugMode)
+                std::cout << "me: " << me << "\n";
 
-            // std::cout << "hello2"
-            //           << "\n";
-            // std::cout << task;
             task->run();
             task = queue[me]->popBottom();
         }
 
         bool hasPushedTask = false;
         int currentTaskPushed = 0;
-        while(currentTaskPushed < numberOfTaskToPush && taskPushed < totalTask){
-            CheckPrime* checkPrime = new CheckPrime(start + taskPushed + 1);
+        while (currentTaskPushed < numberOfTaskToPush && taskPushed < totalTask)
+        {
+            CheckPrime *checkPrime = new CheckPrime(start + taskPushed + 1);
+            if(debugMode)
+                std::cout << "pushed: " << start + taskPushed + 1 << "\n";
             queue[me]->pushBottom(checkPrime);
             taskPushed++;
             currentTaskPushed++;
             hasPushedTask = true;
         }
-        if(hasPushedTask){
+        if (hasPushedTask)
+        {
             numberOfTaskToPush *= 2;
-            if(numberOfTaskToPush > totalTask){
+            if (numberOfTaskToPush > totalTask)
+            {
                 numberOfTaskToPush = totalTask - taskPushed;
             }
 
             task = queue[me]->popBottom();
         }
-        int count = length;
-        // std::cout << "hello3"
-        //           << "\n";
-        while (task == nullptr && !hasPushedTask && count > 0 )
+        if (!hasConcurrentPushTopMethod && hasPushedTask)
         {
-            std::cout << "entered while loop" << "\n";
-            // std::cout << "hello4"
-            //           << "\n";
+            continue;
+        }
 
+        if (!hasConcurrentPushTopMethod && !hasPushedTask)
+        {
+            return;
+        }
+        int count = length;
+        while (task == nullptr && !hasPushedTask && count > 0)
+        {
             std::this_thread::yield();
             int victim = rand() % length;
             while (victim == me)

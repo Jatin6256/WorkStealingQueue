@@ -6,7 +6,8 @@ BoundedDequeue::BoundedDequeue() {}
 
 BoundedDequeue::BoundedDequeue(int capacity)
 {
-    std::cout << "BoundedDequeue constructor line 7 boundedDequeue.cpp" << "\n";
+    if(debugMode)
+        std::cout << "BoundedDequeue constructor line 7 boundedDequeue.cpp" << "\n";
     tasks = new RunnableTask*[capacity];
     StampedReference<int> topInput;
     top = new std::atomic<StampedReference<int>>(topInput);
@@ -15,7 +16,8 @@ BoundedDequeue::BoundedDequeue(int capacity)
 
 bool BoundedDequeue::isEmpty()
 {
-    std::cout << "BoundedDequeue isEmpty line 15 boundedDequeue.cpp" << "\n";
+    if(debugMode)
+        std::cout << "BoundedDequeue isEmpty line 15 boundedDequeue.cpp" << "\n";
     int localTop = top->load().value;
     int localBottom = bottom;
     return (localBottom <= localTop);
@@ -23,14 +25,16 @@ bool BoundedDequeue::isEmpty()
 
 void BoundedDequeue::pushBottom(RunnableTask *task)
 {
-    std::cout << "BoundedDequeue pushBottom() line 23 boundedDequeue.cpp" << "\n";
+    if(debugMode)
+        std::cout << "BoundedDequeue pushBottom() line 23 boundedDequeue.cpp" << "\n";
     tasks[bottom] = task;
     bottom++;
 }
 
 RunnableTask *BoundedDequeue::popTop()
 {
-    std::cout << "BoundedDequeue popTop() line 30 boundedDequeue.cpp" << "\n";
+    if(debugMode)
+        std::cout << "BoundedDequeue popTop() line 30 boundedDequeue.cpp" << "\n";
     StampedReference<int> oldTop = top->load();
     StampedReference<int>  newTop(oldTop.value+1, oldTop.stamp+1);
     
@@ -46,7 +50,8 @@ RunnableTask *BoundedDequeue::popTop()
 
 RunnableTask *BoundedDequeue::popBottom()
 {
-    std::cout << "BoundedDequeue popBottom() line 46 boundedDequeue.cpp" << "\n";
+    if(debugMode)
+        std::cout << "BoundedDequeue popBottom() line 46 boundedDequeue.cpp" << "\n";
     if(bottom == 0)
         return nullptr;
     bottom--;

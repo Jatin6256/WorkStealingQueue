@@ -16,6 +16,7 @@ class BoundedDequeue: public Dequeue {
     RunnableTask** tasks;
     volatile int bottom;
     std::atomic<StampedReference<int>>* top;
+    static const bool debugMode = false; 
     public:
         BoundedDequeue();
         BoundedDequeue(int capacity);

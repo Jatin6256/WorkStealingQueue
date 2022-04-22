@@ -3,9 +3,13 @@
 #include "./headers/workStealingDequeue.hpp"
 #include "./headers/unboundedDequeue.hpp"
 #include "./headers/boundedDequeue.hpp"
+#include "./headers/normalDequeue.hpp"
+#include <chrono>
+using namespace std::chrono;
 
 void *testWorkStealing(void *sharedBlock);
-int numOfThreads = 4, numOfTasks = 2;
+int numOfThreads = 4;
+bool debugMode = false;
 
 struct SharedValue
 {
@@ -30,37 +34,48 @@ struct SharedValue
 
 int main()
 {
-    // CheckPrime checkPrime1(2);
-    // CheckPrime checkPrime2(3);
-    // CheckPrime checkPrime3(5);
-
-    // Dequeue** unboundedDequeue = new Dequeue*[3];
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     unboundedDequeue[i] = new UnboundedDequeue();
-    //     unboundedDequeue[i] -> pushBottom(&checkPrime1);
-    // }
-
-    // workStealingDequeues.run(0);
 
     struct SharedValue *sharedContent[numOfThreads];
     int rc;
     pthread_t threads[numOfThreads]; // array to store thread id of threads
     srand(time(0));
 
-    int checkPrimeUpto = 100000;
+    int checkPrimeUpto;
+    int queueType;
+    std::cin >> checkPrimeUpto >> queueType;
     int taskSize = checkPrimeUpto / numOfThreads;
+    Dequeue **normalDequeue;
+    Dequeue **boundedDequeue;
+    Dequeue **unboundedDequeue;
+    WorkStealingDequeues *workStealingDequeues;
 
-    Dequeue **boundedDequeue = new Dequeue *[numOfThreads];
-    Dequeue **unboundedDequeue = new Dequeue *[numOfThreads];
-    for (int i = 0; i < numOfThreads; i++)
+    if (queueType == 1)
     {
-        // unboundedDequeue[i] = new UnboundedDequeue();
-        boundedDequeue[i] = new BoundedDequeue(taskSize);
+        normalDequeue = new Dequeue *[numOfThreads];
+        for (int i = 0; i < numOfThreads; i++)
+        {
+            normalDequeue[i] = new NormalDequeue();
+        }
+        workStealingDequeues = new WorkStealingDequeues(normalDequeue, numOfThreads, false);
     }
-
-    WorkStealingDequeues *workStealingDequeues = new WorkStealingDequeues(boundedDequeue, numOfThreads);
-    // WorkStealingDequeues *workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads);
+    else if (queueType == 2)
+    {
+        boundedDequeue = new Dequeue *[numOfThreads];
+        for (int i = 0; i < numOfThreads; i++)
+        {
+            boundedDequeue[i] = new BoundedDequeue(taskSize);
+        }
+        workStealingDequeues = new WorkStealingDequeues(boundedDequeue, numOfThreads, true);
+    }
+    else if (queueType == 3)
+    {
+        unboundedDequeue = new Dequeue *[numOfThreads];
+        for (int i = 0; i < numOfThreads; i++)
+        {
+            unboundedDequeue[i] = new UnboundedDequeue();
+        }
+        workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads, true);
+    }
 
     int start = 0;
     for (int i = 0; i < numOfThreads; i++)
@@ -75,6 +90,7 @@ int main()
     }
 
     // create threads
+    auto startTime = high_resolution_clock::now();
     for (int i = 0; i < numOfThreads; i++)
     {
         // creates threads and allots its task
@@ -91,6 +107,11 @@ int main()
     {
         pthread_join(threads[i], NULL);
     }
+    auto stopTime = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stopTime - startTime);
+
+    std::cout << duration.count() << " microseconds"
+              << "\n";
 
     return 0;
 }
@@ -102,7 +123,8 @@ void *testWorkStealing(void *sharedBlock)
     int id = sharedContent->threadNumber;
     int start = sharedContent->start;
     int end = sharedContent->end;
-    std::cout << id << " " << start << " " << end << "\n";
+    if (debugMode)
+        std::cout << id << " " << start << " " << end << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
 
     workStealingDequeues->run(id, start, end);
