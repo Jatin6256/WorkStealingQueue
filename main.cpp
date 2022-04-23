@@ -8,7 +8,6 @@
 using namespace std::chrono;
 
 void *testWorkStealing(void *sharedBlock);
-int numOfThreads = 4;
 bool debugMode = false;
 
 struct SharedValue
@@ -35,14 +34,23 @@ struct SharedValue
 int main()
 {
 
-    struct SharedValue *sharedContent[numOfThreads];
-    int rc;
-    pthread_t threads[numOfThreads]; // array to store thread id of threads
-    srand(time(0));
 
     int checkPrimeUpto;
     int queueType;
-    std::cin >> checkPrimeUpto >> queueType;
+int numOfThreads;
+  
+    std::cout << "Enter Number Of threads: ";
+    std::cin >> numOfThreads;
+    std::cout << "Check Primes Upto: ";
+    std::cin >> checkPrimeUpto;
+    std::cout << "Available QueueTypes -> \n1: Normal Queue \n2: Bounded Queue \n3: UnBounded Queue \n";
+    std::cout << "Enter QueueType: ";
+    std::cin >> queueType;
+
+      struct SharedValue *sharedContent[numOfThreads];
+    int rc;
+    pthread_t threads[numOfThreads]; // array to store thread id of threads
+    srand(time(0));
     int taskSize = checkPrimeUpto / numOfThreads;
     Dequeue **normalDequeue;
     Dequeue **boundedDequeue;
@@ -112,6 +120,8 @@ int main()
 
     std::cout << duration.count() << " microseconds"
               << "\n";
+    std::cout << workStealingDequeues -> getResult() -> size()
+              << "\n";
 
     return 0;
 }
@@ -126,7 +136,6 @@ void *testWorkStealing(void *sharedBlock)
     if (debugMode)
         std::cout << id << " " << start << " " << end << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
-
     workStealingDequeues->run(id, start, end);
 
     return NULL;

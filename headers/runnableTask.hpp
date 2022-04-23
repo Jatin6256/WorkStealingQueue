@@ -2,6 +2,6 @@
 #define RUNNABLETASK_HPP
 class RunnableTask{
 public:
-    virtual void run();
+    virtual int run();
 };
 #endif

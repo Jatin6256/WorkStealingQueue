@@ -2,6 +2,7 @@
 #include "../headers/runnableTask.hpp"
 
 
-void RunnableTask::run() {
+int RunnableTask::run() {
     std::cout << "Runnable Task Run" << std::endl;
+  return -1;
 }

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../headers/checkPrime.hpp"
+#include<math.h>
 
 CheckPrime::CheckPrime()
 {
@@ -15,7 +16,7 @@ CheckPrime::CheckPrime(int n)
         std::cout << "CheckPrime Constructor" << std::endl;
 }
 
-void CheckPrime::run()
+int CheckPrime::run()
 {
     if (debugMode)
         std::cout << "Check Prime Run: " << number << std::endl;
@@ -26,21 +27,21 @@ void CheckPrime::run()
             std::cout << number << " is Not prime"
                       << "\n";
 
-        return;
+        return -1;
     }
 
     // Check from 2 to n-1
-    for (int i = 2; i < number; i++)
+    for (int i = 2; i <= sqrt(number); i++)
         if (number % i == 0)
         {
             if (debugMode)
                 std::cout << number << " is Not prime"
                           << "\n";
-            return;
+            return -1;
         }
 
     if (debugMode)
         std::cout << number << " is prime"
                   << "\n";
-    return;
+    return number;
 }

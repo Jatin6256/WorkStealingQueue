@@ -2,6 +2,10 @@
 #include "../headers/checkPrime.hpp"
 #include "thread"
 #include <iostream>
+#include <vector>
+#include <mutex>
+
+std::mutex mtx;   
 
 WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l, bool hasConcurrentPushTopMethod)
 {
@@ -9,6 +13,7 @@ WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l, bool hasCon
         std::cout << "WorkStealingDequeues constructor line 6 WorkStealingDequeues.cpp"
                   << "\n";
     queue = myQueue;
+    resultArray = new std::vector<int>();
     length = l;
     this->hasConcurrentPushTopMethod = hasConcurrentPushTopMethod;
     srand(time(0));
@@ -36,8 +41,13 @@ void WorkStealingDequeues::run(int id, int start, int end)
             if (debugMode)
                 std::cout << "me: " << me << "\n";
 
-            task->run();
-            task = queue[me]->popBottom();
+            int result = task->run();
+            
+          if(result >=0){
+            mtx.lock();
+              resultArray->push_back(result);
+            mtx.unlock();}
+          task = queue[me]->popBottom();
         }
 
         bool hasPushedTask = false;
@@ -95,4 +105,8 @@ void WorkStealingDequeues::run(int id, int start, int end)
             break;
         }
     }
+}
+
+std::vector<int>* WorkStealingDequeues::getResult(){
+  return resultArray;
 }

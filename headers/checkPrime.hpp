@@ -9,7 +9,7 @@ class CheckPrime: public RunnableTask{
     public:
         CheckPrime();
         CheckPrime(int n);
-        void run();
+        int run();
 };
 
 #endif
