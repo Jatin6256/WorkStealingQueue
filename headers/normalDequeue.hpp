@@ -8,7 +8,7 @@
 class NormalDequeue: public Dequeue {
     
     std::deque<RunnableTask*>* tasks;
-    static const bool debugMode = false; 
+    static const bool debugMode = true; 
 
     public:
         NormalDequeue();

@@ -16,6 +16,7 @@ WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l, bool hasCon
 
 void WorkStealingDequeues::run(int id, int start, int end)
 {
+    std::cout << "Hello" << "\n";
     if (debugMode)
         std::cout << "WorkStealingDequeues run line 14 WorkStealingDequeues.cpp"
                   << "\n";
@@ -30,9 +31,10 @@ void WorkStealingDequeues::run(int id, int start, int end)
     while (true)
     {
 
-
+        std::cout << "Hello2" << "\n";
         while (task != nullptr)
         {
+            std::cout << "Hello4" << "\n";
             if (debugMode)
                 std::cout << "me: " << me << "\n";
 
@@ -44,6 +46,7 @@ void WorkStealingDequeues::run(int id, int start, int end)
         int currentTaskPushed = 0;
         while (currentTaskPushed < numberOfTaskToPush && taskPushed < totalTask)
         {
+            std::cout << "Hello3" << "\n";
             CheckPrime *checkPrime = new CheckPrime(start + taskPushed + 1);
             if(debugMode)
                 std::cout << "pushed: " << start + taskPushed + 1 << "\n";

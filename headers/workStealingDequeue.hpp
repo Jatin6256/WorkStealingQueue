@@ -11,7 +11,7 @@ class WorkStealingDequeues
     Dequeue** queue;
     int length;
     bool hasConcurrentPushTopMethod;
-    static const bool debugMode = false; 
+    static const bool debugMode = true; 
 
     public:
         WorkStealingDequeues(Dequeue** myQueue, int l, bool hasConcurrentPushTopMethod);

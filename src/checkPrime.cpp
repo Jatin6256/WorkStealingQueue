@@ -17,6 +17,7 @@ CheckPrime::CheckPrime(int n)
 
 void CheckPrime::run()
 {
+    std::cout << "task-run " << number << "\n";
     if (debugMode)
         std::cout << "Check Prime Run: " << number << std::endl;
 

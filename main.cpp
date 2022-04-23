@@ -9,7 +9,7 @@ using namespace std::chrono;
 
 void *testWorkStealing(void *sharedBlock);
 int numOfThreads = 4;
-bool debugMode = false;
+bool debugMode = true;
 
 struct SharedValue
 {

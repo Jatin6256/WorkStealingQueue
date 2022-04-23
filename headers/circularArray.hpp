@@ -8,7 +8,7 @@ class CircularArray
 private:
     int logCapacity;
     RunnableTask **currentTasks;
-    static const bool debugMode = false;
+    static const bool debugMode = true;
 
 public:
     CircularArray();
