@@ -20,7 +20,7 @@ bool BoundedDequeue::isEmpty()
         std::cout << "BoundedDequeue isEmpty line 15 boundedDequeue.cpp" << "\n";
     int localTop = top->load().value;
     int localBottom = bottom;
-    return (localBottom <= localTop);
+    return (localTop < localBottom);
 }
 
 void BoundedDequeue::pushBottom(RunnableTask *task)
