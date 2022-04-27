@@ -1,11 +1,13 @@
 #include "../headers/workStealingDequeue.hpp"
 #include "../headers/checkPrime.hpp"
+#include "../headers/MatrixMultiplicationUtility.hpp"
+
 #include "thread"
 #include <iostream>
 #include <vector>
 #include <mutex>
 
-std::mutex mtx;   
+std::mutex mtx;
 
 WorkStealingDequeues::WorkStealingDequeues(Dequeue **myQueue, int l, bool hasConcurrentPushTopMethod)
 {
@@ -35,19 +37,20 @@ void WorkStealingDequeues::run(int id, int start, int end)
     while (true)
     {
 
-
         while (task != nullptr)
         {
             if (debugMode)
                 std::cout << "me: " << me << "\n";
 
             int result = task->run();
-            
-          if(result >=0){
-            mtx.lock();
-              resultArray->push_back(result);
-            mtx.unlock();}
-          task = queue[me]->popBottom();
+
+            if (result >= 0)
+            {
+                mtx.lock();
+                resultArray->push_back(result);
+                mtx.unlock();
+            }
+            task = queue[me]->popBottom();
         }
 
         bool hasPushedTask = false;
@@ -55,7 +58,7 @@ void WorkStealingDequeues::run(int id, int start, int end)
         while (currentTaskPushed < numberOfTaskToPush && taskPushed < totalTask)
         {
             CheckPrime *checkPrime = new CheckPrime(start + taskPushed + 1);
-            if(debugMode)
+            if (debugMode)
                 std::cout << "pushed: " << start + taskPushed + 1 << "\n";
             queue[me]->pushBottom(checkPrime);
             taskPushed++;
@@ -107,6 +110,57 @@ void WorkStealingDequeues::run(int id, int start, int end)
     }
 }
 
-std::vector<int>* WorkStealingDequeues::getResult(){
-  return resultArray;
+void WorkStealingDequeues::runMM(int id, int *row, int *column, int *store, int length)
+{
+    if (debugMode)
+        std::cout << "WorkStealingDequeues run line 14 WorkStealingDequeues.cpp"
+                  << "\n";
+
+    int me = id;
+    if (debugMode)
+        std::cout << "me: " << me << "\n";
+
+    queue[me]->pushBottom(new MatrixMultiplicationUtility(row, column, length));
+
+    RunnableTask *task = queue[me]->popBottom();
+    while (true)
+    {
+
+        while (task != nullptr)
+        {
+            if (debugMode)
+                std::cout << "me: " << me << "\n";
+
+            task->run();
+            task = queue[me]->popBottom();
+        }
+
+        int count = this->length;
+        while (task == nullptr && count > 0)
+        {
+            std::this_thread::yield();
+            int victim = rand() % length;
+            while (victim == me)
+            {
+                victim = rand() % length;
+            }
+
+            if (!queue[victim]->isEmpty())
+            {
+                task = queue[victim]->popTop();
+                // count = length;
+            }
+
+            count--;
+        }
+
+        if (count == 0)
+        {
+            break;
+        }
+    }
+}
+std::vector<int> *WorkStealingDequeues::getResult()
+{
+    return resultArray;
 }
