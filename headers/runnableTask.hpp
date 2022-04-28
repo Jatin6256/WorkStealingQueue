@@ -3,6 +3,5 @@
 class RunnableTask{
 public:
     virtual int run();
-    virtual void run(int* store);
 };
 #endif

@@ -110,7 +110,7 @@ void WorkStealingDequeues::run(int id, int start, int end)
     }
 }
 
-void WorkStealingDequeues::runMM(int id, int *row, int *column, int *store, int length)
+void WorkStealingDequeues::runMM(int id)
 {
     if (debugMode)
         std::cout << "WorkStealingDequeues run line 14 WorkStealingDequeues.cpp"
@@ -120,7 +120,7 @@ void WorkStealingDequeues::runMM(int id, int *row, int *column, int *store, int 
     if (debugMode)
         std::cout << "me: " << me << "\n";
 
-    queue[me]->pushBottom(new MatrixMultiplicationUtility(row, column, length));
+    // queue[me]->pushBottom(new MatrixMultiplicationUtility(row, column, length));
 
     RunnableTask *task = queue[me]->popBottom();
     while (true)
@@ -131,7 +131,7 @@ void WorkStealingDequeues::runMM(int id, int *row, int *column, int *store, int 
             if (debugMode)
                 std::cout << "me: " << me << "\n";
 
-            task->run(store);
+            task->run();
             task = queue[me]->popBottom();
         }
 
@@ -159,6 +159,14 @@ void WorkStealingDequeues::runMM(int id, int *row, int *column, int *store, int 
             break;
         }
     }
+}
+
+void WorkStealingDequeues::pushTask(int id, RunnableTask* task)
+{
+    if (debugMode)
+        std::cout << "WorkStealingDequeues pushTask line 28 WorkStealingDequeues.cpp"
+                  << "\n";
+    queue[id]->pushBottom(task);
 }
 std::vector<int> *WorkStealingDequeues::getResult()
 {

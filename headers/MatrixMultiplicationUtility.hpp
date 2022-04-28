@@ -5,13 +5,14 @@
 class MatrixMultiplicationUtility: public RunnableTask{
     int* row;
     int* column;
-    int length;
+    int* store;
+    int length; 
     static const bool debugMode = false;
 
     public:
         MatrixMultiplicationUtility();
-        MatrixMultiplicationUtility(int* row,int* column, int l);
-        void run(int* store);
+        MatrixMultiplicationUtility(int* row,int* column,int* store, int l);
+        int run();
 };
 
 #endif

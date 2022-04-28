@@ -18,7 +18,8 @@ class WorkStealingDequeues
     public:
         WorkStealingDequeues(Dequeue** myQueue, int l, bool hasConcurrentPushTopMethod);
         void run(int id,int start,int end);
-        void runMM(int id,int* row,int* column,int* store, int length);
+        void runMM(int id);
+        void pushTask(int id, RunnableTask* task);
         std::vector<int>* getResult();
 };
 

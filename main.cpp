@@ -4,6 +4,7 @@
 #include "./headers/unboundedDequeue.hpp"
 #include "./headers/boundedDequeue.hpp"
 #include "./headers/normalDequeue.hpp"
+#include "./headers/MatrixMultiplicationUtility.hpp"
 #include <chrono>
 using namespace std::chrono;
 
@@ -37,24 +38,24 @@ struct SharedValueMM
     int threadNumber; // to track thread number
     // Dequeue **boundedDequeue;
     WorkStealingDequeues *workStealingDequeues;
-    int *row;
-    int *column;
-    int *store;
-    int length;
+    // int *row;
+    // int *column;
+    // int *store;
+    // int length;
 
     SharedValueMM()
     {
         workStealingDequeues = nullptr;
     }
 
-    SharedValueMM(int threadNumber, WorkStealingDequeues *workStealingDequeues, int *row, int *column,int* store, int length)
+    SharedValueMM(int threadNumber, WorkStealingDequeues *workStealingDequeues)
     {
         this->threadNumber = threadNumber;
         this->workStealingDequeues = workStealingDequeues;
-        this->row = row;
-        this->column = column;
-        this->store = store;
-        this->length = length;
+        // this->row = row;
+        // this->column = column;
+        // this->store = store;
+        // this->length = length;
     }
 };
 int main()
@@ -113,7 +114,11 @@ int main()
                 unboundedDequeue[i] = new UnboundedDequeue();
             }
             workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads, true);
+        }else{
+            std::cout << "Invalid Queue Type";
+            return 0;
         }
+
 
         int start = 0;
         for (int i = 0; i < numOfThreads; i++)
@@ -157,12 +162,13 @@ int main()
     {
         int n1, m1;
         int n2, m2;
-        std::cout << "Enter size of matrix 1 ";
+        std::cout << "Enter size of matrix 1 (row column) ";
         std::cin >> n1 >> m1;
-        std::cout << "Enter size of matrix 1 ";
-
+        std::cout << "Enter size of matrix 2 (row column)";
         std::cin >> n2 >> m2;
-
+        int range;
+        std::cout << "Enter range of matrix multiplication: ";
+        std::cin >> range;
         if (m1 != n2)
         {
             std::cout << "Invalid Matrix dimensions for multiplication"
@@ -197,7 +203,7 @@ int main()
         {
             for (int j = 0; j < m1; j++)
             {
-                std::cin >> a[i][j];
+                a[i][j] = rand() % range;
             }
         }
 
@@ -205,15 +211,15 @@ int main()
         {
             for (int j = 0; j < m2; j++)
             {
-                std::cin >> b[i][j];
+                b[i][j] = rand() % range;
             }
         }
         std::cout << "Enter queue type";
         std::cin >> queueType;
-        int numOfThreads = n1 * m2;
+        int numOfThreads = 4;
         struct SharedValueMM *sharedContent[numOfThreads];
         int rc;
-        pthread_t threads[n1 * m2]; // array to store thread id of threads
+        pthread_t threads[numOfThreads]; // array to store thread id of threads
         std::cout << "num of threads:" << numOfThreads << "\n";
         srand(time(0));
         Dequeue **normalDequeue;
@@ -248,18 +254,33 @@ int main()
             }
             workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads, true);
         }
+        else{
+            std::cout << "Invalid queue type" << "\n";
+            return 0;
+        }
+
+
+
+        for (int i = 0; i < numOfThreads; i++)
+        {
+            sharedContent[i] = new SharedValueMM(i, workStealingDequeues);
+        }
+
+
+        auto startTime = high_resolution_clock::now();
 
         for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
             {
-                sharedContent[i*m2 + j] = new SharedValueMM(i*m2 + j, workStealingDequeues, a[i], b[j],&c[i][j],m1);
+                int id = rand() % numOfThreads;
+                workStealingDequeues->pushTask(id, new MatrixMultiplicationUtility(a[i], b[j], &c[i][j], m1));
             }
-            
         }
-        std::cout << "hello" << "\n";
+
+        std::cout << "hello"
+                  << "\n";
         // create threads
-        auto startTime = high_resolution_clock::now();
         for (int i = 0; i < numOfThreads; i++)
         {
             // creates threads and allots its task
@@ -281,7 +302,22 @@ int main()
 
         std::cout << duration.count() << " microseconds"
                   << "\n";
-
+        for (int i = 0; i < n1; i++)
+        {
+            for (int j = 0; j < m2; j++)
+            {
+                std::cout << a[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+                for (int i = 0; i < n1; i++)
+        {
+            for (int j = 0; j < m2; j++)
+            {
+                std::cout << b[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
         for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
@@ -290,7 +326,10 @@ int main()
             }
             std::cout << "\n";
         }
-        
+    }
+    else{
+        std::cout << "Invalid task type"
+                  << "\n";
     }
 
     return 0;
@@ -301,13 +340,13 @@ void *testWorkStealingWithMM(void *sharedBlock)
     SharedValueMM *sharedContent = (SharedValueMM *)sharedBlock;
     int lVar;
     int id = sharedContent->threadNumber;
-    int *row = sharedContent->row;
-    int *column = sharedContent->column;
-    int *store = sharedContent->store;
-    int length = sharedContent->length;
+    // int *row = sharedContent->row;
+    // int *column = sharedContent->column;
+    // int *store = sharedContent->store;
+    // int length = sharedContent->length;
     std::cout << "id:" << id << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
-    workStealingDequeues->runMM(id, row, column, store, length);
+    workStealingDequeues->runMM(id);
 
     return NULL;
 }

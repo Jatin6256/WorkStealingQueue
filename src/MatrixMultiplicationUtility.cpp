@@ -8,16 +8,17 @@ MatrixMultiplicationUtility::MatrixMultiplicationUtility()
         std::cout << "CheckPrime Default Constructor" << std::endl;
 }
 
-MatrixMultiplicationUtility::MatrixMultiplicationUtility(int* row,int* column,int l)
+MatrixMultiplicationUtility::MatrixMultiplicationUtility(int* row,int* column,int* store,int l)
 {
     if (debugMode)
         std::cout << "CheckPrime Constructor" << std::endl;
     this->row = row;
     this->column = column;
+    this->store = store;
     this->length = l;
 }
 
-void MatrixMultiplicationUtility::run(int* store){
+int MatrixMultiplicationUtility::run(){
 
     int sum = 0;
     for (int i = 0; i < length; i++)
@@ -26,4 +27,5 @@ void MatrixMultiplicationUtility::run(int* store){
     }
 
     *store = sum;
+    return 1;
 }
