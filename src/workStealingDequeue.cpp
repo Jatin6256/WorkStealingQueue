@@ -131,7 +131,7 @@ void WorkStealingDequeues::runMM(int id, int *row, int *column, int *store, int 
             if (debugMode)
                 std::cout << "me: " << me << "\n";
 
-            task->run();
+            task->run(store);
             task = queue[me]->popBottom();
         }
 

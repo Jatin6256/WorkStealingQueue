@@ -8,6 +8,7 @@
 using namespace std::chrono;
 
 void *testWorkStealing(void *sharedBlock);
+void *testWorkStealingWithMM(void *sharedBlock);
 bool debugMode = false;
 
 struct SharedValue
@@ -59,6 +60,7 @@ struct SharedValueMM
 int main()
 {
     int taskType;
+    std::cout << "Enter type of tasks: ";
     std::cin >> taskType;
 
     if (taskType == 1)
@@ -155,7 +157,10 @@ int main()
     {
         int n1, m1;
         int n2, m2;
+        std::cout << "Enter size of matrix 1 ";
         std::cin >> n1 >> m1;
+        std::cout << "Enter size of matrix 1 ";
+
         std::cin >> n2 >> m2;
 
         if (m1 != n2)
@@ -203,12 +208,13 @@ int main()
                 std::cin >> b[i][j];
             }
         }
-
+        std::cout << "Enter queue type";
         std::cin >> queueType;
         int numOfThreads = n1 * m2;
         struct SharedValueMM *sharedContent[numOfThreads];
         int rc;
         pthread_t threads[n1 * m2]; // array to store thread id of threads
+        std::cout << "num of threads:" << numOfThreads << "\n";
         srand(time(0));
         Dequeue **normalDequeue;
         Dequeue **boundedDequeue;
@@ -247,17 +253,17 @@ int main()
         {
             for (int j = 0; j < m2; j++)
             {
-                sharedContent[i] = new SharedValueMM(i, workStealingDequeues, a[i], b[j],&c[i][j],m1);
+                sharedContent[i*m2 + j] = new SharedValueMM(i*m2 + j, workStealingDequeues, a[i], b[j],&c[i][j],m1);
             }
             
         }
-
+        std::cout << "hello" << "\n";
         // create threads
         auto startTime = high_resolution_clock::now();
         for (int i = 0; i < numOfThreads; i++)
         {
             // creates threads and allots its task
-            rc = pthread_create(&threads[i], NULL, testWorkStealing, (void *)sharedContent[i]);
+            rc = pthread_create(&threads[i], NULL, testWorkStealingWithMM, (void *)sharedContent[i]);
             if (rc)
             {
                 printf("ERROR; return code from pthread_create() is %d\n", rc);
@@ -299,6 +305,7 @@ void *testWorkStealingWithMM(void *sharedBlock)
     int *column = sharedContent->column;
     int *store = sharedContent->store;
     int length = sharedContent->length;
+    std::cout << "id:" << id << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
     workStealingDequeues->runMM(id, row, column, store, length);
 

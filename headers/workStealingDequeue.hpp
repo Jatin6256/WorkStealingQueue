@@ -13,7 +13,7 @@ class WorkStealingDequeues
     int length;
     bool hasConcurrentPushTopMethod;
     std::vector<int>* resultArray;
-    static const bool debugMode = false; 
+    static const bool debugMode = true; 
 
     public:
         WorkStealingDequeues(Dequeue** myQueue, int l, bool hasConcurrentPushTopMethod);
