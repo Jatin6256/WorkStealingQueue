@@ -62,7 +62,7 @@ int main()
 {
     srand(time(0));
     int taskType;
-    std::cout << "Task Type 1: Checking Prime Numbers \nTask Type 2: Matrix Multiplication";
+    std::cout << "Task Type 1: Checking Prime Numbers \nTask Type 2: Matrix Multiplication\n";
     std::cout << "Enter type of tasks: ";
     std::cin >> taskType;
 
