@@ -177,21 +177,21 @@ int main()
     {
 
         std::fstream matrix1, matrix2, result;
-        matrix1.open("matrix1.txt", std::ios::app);
+        matrix1.open("matrix1.txt", std::ios::out);
         if (!matrix1)
         {
             std::cout << "Unable to open file";
             exit(1); // terminate with error
         }
 
-        matrix2.open("matrix2.txt", std::ios::app);
+        matrix2.open("matrix2.txt", std::ios::out);
         if (!matrix2)
         {
             std::cout << "Unable to open file";
             exit(1); // terminate with error
         }
 
-        result.open("matrixResult.txt", std::ios::app);
+        result.open("matrixResult.txt", std::ios::out);
         if (!matrix2)
         {
             std::cout << "Unable to open file";
@@ -342,7 +342,7 @@ int main()
             {
                 matrix1 << a[i][j] << " ";
             }
-            std::cout << "\n";
+            matrix1 << "\n";
         }
         for (int i = 0; i < n1; i++)
         {
@@ -350,7 +350,7 @@ int main()
             {
                 matrix2 << b[i][j] << " ";
             }
-            std::cout << "\n";
+            matrix2 << "\n";
         }
 
         for (int i = 0; i < n1; i++)
@@ -359,7 +359,7 @@ int main()
             {
                 result << c[i][j] << " ";
             }
-            std::cout << "\n";
+            result  << "\n";
         }
 
         std::cout << "Time Taken: " << duration.count() << " microseconds"
