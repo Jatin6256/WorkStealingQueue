@@ -62,8 +62,7 @@ int main()
 {
     srand(time(0));
     int taskType;
-    std::cout << "Available Task -> \n1: Check Prime Upto \n2: Matrix Multiplication \n";
-
+    std::cout << "Task Type 1: Checking Prime Numbers \nTask Type 2: Matrix Multiplication";
     std::cout << "Enter type of tasks: ";
     std::cin >> taskType;
 
@@ -229,7 +228,10 @@ int main()
                 b[i][j] = rand() % range;
             }
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 133c37de1d3cab27d6f4ba27f7ece5a9119b2dc9
         std::cout << "Available QueueTypes -> \n1: Normal Queue \n2: Bounded Queue \n3: UnBounded Queue \n";
         std::cout << "Enter queue type";
         std::cin >> queueType;
