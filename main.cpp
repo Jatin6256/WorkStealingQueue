@@ -72,7 +72,17 @@ int main()
 
         std::cout << "Enter Number Of threads: ";
         std::cin >> numOfThreads;
+        if (numOfThreads <= 0)
+        {
+            std::cout << "Invalid Number of threads" << std::endl;
+            return 0;
+        }
         std::cout << "Check Primes Upto: ";
+        if (checkPrimeUpto <= 0)
+        {
+            std::cout << "Invalid Number" << std::endl;
+            return 0;
+        }
         std::cin >> checkPrimeUpto;
         std::cout << "Available QueueTypes -> \n1: Normal Queue \n2: Bounded Queue \n3: UnBounded Queue \n";
         std::cout << "Enter QueueType: ";
@@ -114,11 +124,12 @@ int main()
                 unboundedDequeue[i] = new UnboundedDequeue();
             }
             workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads, true);
-        }else{
+        }
+        else
+        {
             std::cout << "Invalid Queue Type";
             return 0;
         }
-
 
         int start = 0;
         for (int i = 0; i < numOfThreads; i++)
@@ -254,18 +265,17 @@ int main()
             }
             workStealingDequeues = new WorkStealingDequeues(unboundedDequeue, numOfThreads, true);
         }
-        else{
-            std::cout << "Invalid queue type" << "\n";
+        else
+        {
+            std::cout << "Invalid queue type"
+                      << "\n";
             return 0;
         }
-
-
 
         for (int i = 0; i < numOfThreads; i++)
         {
             sharedContent[i] = new SharedValueMM(i, workStealingDequeues);
         }
-
 
         auto startTime = high_resolution_clock::now();
 
@@ -302,6 +312,9 @@ int main()
 
         std::cout << duration.count() << " microseconds"
                   << "\n";
+
+        std::cout << "Matrix 1:"
+                  << "\n";
         for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
@@ -310,7 +323,9 @@ int main()
             }
             std::cout << "\n";
         }
-                for (int i = 0; i < n1; i++)
+
+        std::cout << "Matrix 2:" << "\n";
+        for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
             {
@@ -318,6 +333,8 @@ int main()
             }
             std::cout << "\n";
         }
+
+        std::cout << "Result: " << "\n";
         for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
@@ -327,7 +344,8 @@ int main()
             std::cout << "\n";
         }
     }
-    else{
+    else
+    {
         std::cout << "Invalid task type"
                   << "\n";
     }
@@ -340,10 +358,6 @@ void *testWorkStealingWithMM(void *sharedBlock)
     SharedValueMM *sharedContent = (SharedValueMM *)sharedBlock;
     int lVar;
     int id = sharedContent->threadNumber;
-    // int *row = sharedContent->row;
-    // int *column = sharedContent->column;
-    // int *store = sharedContent->store;
-    // int length = sharedContent->length;
     std::cout << "id:" << id << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
     workStealingDequeues->runMM(id);
