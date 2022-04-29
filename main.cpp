@@ -60,7 +60,10 @@ struct SharedValueMM
 };
 int main()
 {
+    srand(time(0));
     int taskType;
+    std::cout << "Available Task -> \n1: Check Prime Upto \n2: Matrix Multiplication \n";
+
     std::cout << "Enter type of tasks: ";
     std::cin >> taskType;
 
@@ -78,12 +81,13 @@ int main()
             return 0;
         }
         std::cout << "Check Primes Upto: ";
+
+        std::cin >> checkPrimeUpto;
         if (checkPrimeUpto <= 0)
         {
             std::cout << "Invalid Number" << std::endl;
             return 0;
         }
-        std::cin >> checkPrimeUpto;
         std::cout << "Available QueueTypes -> \n1: Normal Queue \n2: Bounded Queue \n3: UnBounded Queue \n";
         std::cout << "Enter QueueType: ";
         std::cin >> queueType;
@@ -91,7 +95,6 @@ int main()
         struct SharedValue *sharedContent[numOfThreads];
         int rc;
         pthread_t threads[numOfThreads]; // array to store thread id of threads
-        srand(time(0));
         int taskSize = checkPrimeUpto / numOfThreads;
         Dequeue **normalDequeue;
         Dequeue **boundedDequeue;
@@ -164,9 +167,9 @@ int main()
         auto stopTime = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stopTime - startTime);
 
-        std::cout << duration.count() << " microseconds"
-                  << "\n";
         std::cout << "prime Count:" << workStealingDequeues->getResult()->size()
+                  << "\n";
+        std::cout << "Time Taken: " << duration.count() << " microseconds"
                   << "\n";
     }
     else if (taskType == 2)
@@ -177,15 +180,16 @@ int main()
         std::cin >> n1 >> m1;
         std::cout << "Enter size of matrix 2 (row column)";
         std::cin >> n2 >> m2;
-        int range;
-        std::cout << "Enter range of matrix multiplication: ";
-        std::cin >> range;
+
         if (m1 != n2)
         {
             std::cout << "Invalid Matrix dimensions for multiplication"
                       << "\n";
             return 0;
         }
+        int range;
+        std::cout << "Enter range of matrix values: ";
+        std::cin >> range;
 
         int **a;
         int **b;
@@ -225,13 +229,15 @@ int main()
                 b[i][j] = rand() % range;
             }
         }
+
+        std::cout << "Available QueueTypes -> \n1: Normal Queue \n2: Bounded Queue \n3: UnBounded Queue \n";
         std::cout << "Enter queue type";
         std::cin >> queueType;
         int numOfThreads = 4;
         struct SharedValueMM *sharedContent[numOfThreads];
         int rc;
         pthread_t threads[numOfThreads]; // array to store thread id of threads
-        std::cout << "num of threads:" << numOfThreads << "\n";
+        // std::cout << "num of threads:" << numOfThreads << "\n";
         srand(time(0));
         Dequeue **normalDequeue;
         Dequeue **boundedDequeue;
@@ -288,8 +294,6 @@ int main()
             }
         }
 
-        std::cout << "hello"
-                  << "\n";
         // create threads
         for (int i = 0; i < numOfThreads; i++)
         {
@@ -310,9 +314,6 @@ int main()
         auto stopTime = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stopTime - startTime);
 
-        std::cout << duration.count() << " microseconds"
-                  << "\n";
-
         std::cout << "Matrix 1:"
                   << "\n";
         for (int i = 0; i < n1; i++)
@@ -324,7 +325,8 @@ int main()
             std::cout << "\n";
         }
 
-        std::cout << "Matrix 2:" << "\n";
+        std::cout << "Matrix 2:"
+                  << "\n";
         for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
@@ -334,7 +336,8 @@ int main()
             std::cout << "\n";
         }
 
-        std::cout << "Result: " << "\n";
+        std::cout << "Result: "
+                  << "\n";
         for (int i = 0; i < n1; i++)
         {
             for (int j = 0; j < m2; j++)
@@ -343,6 +346,9 @@ int main()
             }
             std::cout << "\n";
         }
+
+        std::cout << "Time Taken: " << duration.count() << " microseconds"
+                  << "\n";
     }
     else
     {
@@ -358,7 +364,8 @@ void *testWorkStealingWithMM(void *sharedBlock)
     SharedValueMM *sharedContent = (SharedValueMM *)sharedBlock;
     int lVar;
     int id = sharedContent->threadNumber;
-    std::cout << "id:" << id << "\n";
+    if (debugMode)
+        std::cout << "id:" << id << "\n";
     WorkStealingDequeues *workStealingDequeues = sharedContent->workStealingDequeues;
     workStealingDequeues->runMM(id);
 
