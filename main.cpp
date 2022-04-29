@@ -61,6 +61,7 @@ struct SharedValueMM
 int main()
 {
     int taskType;
+    std::cout << "Task Type 1: Finding Prime Numbers \nTask Type 2: Matrix Multiplication";
     std::cout << "Enter type of tasks: ";
     std::cin >> taskType;
 
@@ -225,6 +226,7 @@ int main()
                 b[i][j] = rand() % range;
             }
         }
+        std::cout << "Available QueueTypes -> \n1: Normal Queue \n2: Bounded Queue \n3: UnBounded Queue \n";
         std::cout << "Enter queue type";
         std::cin >> queueType;
         int numOfThreads = 4;
